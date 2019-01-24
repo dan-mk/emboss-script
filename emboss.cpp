@@ -1,5 +1,5 @@
-// g++ emboss.cpp `pkg-config --cflags --libs opencv` -std=c++11 && ./a.out test.png
-// ./a.out teste.png
+// g++ emboss.cpp `pkg-config --cflags --libs opencv` -std=c++11 -o emboss && ./emboss preemboss_res.png
+// ./emboss preemboss_res.png
 
 #include <cstdio>
 #include <cstdlib>
@@ -113,39 +113,11 @@ void invert(Mat vec){
 	bitwise_not(vec, vec);
 }
 
-int main(int argc, char** argv){
-/*
-	img = imread(argv[1], IMREAD_GRAYSCALE);
-	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
-	
-	expand_white(29);
-	invert(img);
-	expand_white(9);
-	invert(img);
-	
-	imwrite("macho.png", img);
-	
-	img = imread(argv[1], IMREAD_GRAYSCALE);
-	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
-	
-	invert(img);
-	expand_white(29);
-	invert(img);
-	expand_white(9);
-	invert(img);
+int cm2pixels600dpi(float cm){
+	return cm * 0.393701 * 600;
+}
 
-	imwrite("femea.png", img);
-	
-	img = imread("macho.png", IMREAD_GRAYSCALE);
-	invert(img);
-	
-	res = imread("femea.png", IMREAD_GRAYSCALE);
-	invert(res);
-	
-	add(img, res, img);
-	
-	imwrite("interseccao.png", img);
-*/
+int main(int argc, char** argv){
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
 	
@@ -156,7 +128,7 @@ int main(int argc, char** argv){
 	
 	Size sz1 = img.size();
     Size sz2 = img.size();
-    Mat im3(sz1.height, sz1.width + sz2.width + 189, img.type());
+    Mat im3(sz1.height + sz2.height + cm2pixels600dpi(0.5), sz1.width, img.type());
     Mat left(im3, Rect(0, 0, sz1.width, sz1.height));
     img.copyTo(left);
 	
@@ -171,10 +143,10 @@ int main(int argc, char** argv){
 	
 	flip(img, img, 1);
 
-	Mat right(im3, Rect(sz1.width + 189, 0, sz2.width, sz2.height));
+	Mat right(im3, Rect(0, sz1.height + cm2pixels600dpi(0.5), sz2.width, sz2.height));
     img.copyTo(right);
 	
-	imwrite("res.png", im3);
+	imwrite("emboss_res.png", im3);
 
 	return 0;
 }

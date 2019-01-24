@@ -1,0 +1,14 @@
+COMO USAR:
+
+Primeiro execute
+
+python3 preemboss.py test.png
+
+para criar a imagem preemboss_res.png
+
+Depois, execute
+
+g++ emboss.cpp `pkg-config --cflags --libs opencv` -std=c++11 -o emboss && ./emboss preemboss_res.png
+
+para gerar a imagem emboss_res.png, que é o resultado final
+

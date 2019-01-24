@@ -1,3 +1,5 @@
+# python3 preemboss.py test.png
+
 import numpy as np
 import cv2
 import sys
@@ -34,9 +36,9 @@ def addPadding(img, size):
 src = cv2.imread(sys.argv[1], cv2.IMREAD_UNCHANGED)
 
 dst = RBGA2RBG(src)
-dst = addPadding(dst, cm2pixels600dpi(1))
+dst = addPadding(dst, cm2pixels600dpi(0.5))
 
-cv2.imwrite('test_pre.png', dst)
+cv2.imwrite('preemboss_res.png', dst)
 
 
 
