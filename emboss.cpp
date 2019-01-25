@@ -91,9 +91,27 @@ void make_res(){
 	}
 }
 
+float pow2(float a){
+	return a * a;
+}
+
+void create_filter(int diameter){
+	filter = Mat::zeros(diameter, diameter, CV_8U);
+	float c = (diameter - 1) / 2.0;
+
+	for(int i = 0; i < diameter; i++){
+		for(int j = 0; j < diameter; j++){
+			float d = sqrt(pow2(i - c) + pow2(j - c));
+			if(d <= c + 0.1){
+				filter.at<unsigned char>(i, j) = 1;
+			}
+		}
+	}
+}
+
 void expand_white(int fs){
 	filter_size = fs;
-	filter = getStructuringElement(MORPH_ELLIPSE, Size(filter_size, filter_size));
+	create_filter(filter_size);
 
 	list.clear();
 	make_list();
@@ -117,13 +135,23 @@ int cm2pixels600dpi(float cm){
 	return cm * 0.393701 * 600;
 }
 
+int circulo(float raio){
+	return cm2pixels600dpi(raio * 2);
+}
+
 int main(int argc, char** argv){
+	float roundness = 0.04;
+
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
 	
-	expand_white(37);
 	invert(img);
-	expand_white(13);
+	expand_white(circulo(0.05 + roundness));
+	invert(img);
+	expand_white(circulo(roundness));
+	expand_white(circulo(0.10 + roundness));
+	invert(img);
+	expand_white(circulo(roundness));
 	invert(img);
 	
 	Size sz1 = img.size();
@@ -135,10 +163,12 @@ int main(int argc, char** argv){
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
 	
+	expand_white(circulo(0.05 + roundness));
 	invert(img);
-	expand_white(37);
+	expand_white(circulo(roundness));
+	expand_white(circulo(0.10 + roundness));
 	invert(img);
-	expand_white(13);
+	expand_white(circulo(roundness));
 	invert(img);
 	
 	flip(img, img, 1);
