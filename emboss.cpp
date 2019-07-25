@@ -46,14 +46,14 @@ void make_list(){
 				a = j - filter_size / 2;
 			}
 		}
-		
+
 		b = -1;
 		for(int j = filter.cols - 1; j >= 0 && b == -1; j--){
 			if(filter.at<bool>(i, j) == 1){
 				b = j - filter_size / 2;
 			}
 		}
-		
+
 		if(a != -1){
 			list.push_back(ii(a, b));
 		}
@@ -115,15 +115,15 @@ void expand_white(int fs){
 
 	list.clear();
 	make_list();
-	
+
 	bgn = Mat::zeros(img.rows, img.cols, CV_8U);
 	nd = Mat::zeros(img.rows, img.cols, CV_8U);
-	
+
 	fillbe();
-	
+
 	res = Mat(img.rows, img.cols, img.type());
 	make_res();
-	
+
 	add(img, res, img);
 }
 
@@ -144,7 +144,7 @@ int main(int argc, char** argv){
 
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
-	
+
 	invert(img);
 	expand_white(circulo(0.05 + roundness));
 	invert(img);
@@ -153,16 +153,16 @@ int main(int argc, char** argv){
 	invert(img);
 	expand_white(circulo(roundness));
 	invert(img);
-	
+
 	Size sz1 = img.size();
-    Size sz2 = img.size();
-    Mat im3(sz1.height + sz2.height + cm2pixels600dpi(0.5), sz1.width, img.type());
-    Mat left(im3, Rect(0, 0, sz1.width, sz1.height));
-    img.copyTo(left);
-	
+	Size sz2 = img.size();
+	Mat im3(sz1.height + sz2.height + cm2pixels600dpi(0.5), sz1.width, img.type());
+	Mat left(im3, Rect(0, 0, sz1.width, sz1.height));
+	img.copyTo(left);
+
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
-	
+
 	expand_white(circulo(0.05 + roundness));
 	invert(img);
 	expand_white(circulo(roundness));
@@ -170,12 +170,12 @@ int main(int argc, char** argv){
 	invert(img);
 	expand_white(circulo(roundness));
 	invert(img);
-	
+
 	flip(img, img, 1);
 
 	Mat right(im3, Rect(0, sz1.height + cm2pixels600dpi(0.5), sz2.width, sz2.height));
-    img.copyTo(right);
-	
+	img.copyTo(right);
+
 	imwrite("emboss_res.png", im3);
 
 	return 0;
