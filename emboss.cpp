@@ -140,6 +140,12 @@ int circulo(float raio){
 }
 
 int main(int argc, char** argv){
+	char stackAxis = 'v';
+	
+	if(argc == 3){
+		stackAxis = argv[2][0];
+	}
+	
 	float roundness = 0.04;
 
 	img = imread(argv[1], IMREAD_GRAYSCALE);
@@ -156,9 +162,18 @@ int main(int argc, char** argv){
 
 	Size sz1 = img.size();
 	Size sz2 = img.size();
-	Mat im3(sz1.height + sz2.height + cm2pixels600dpi(0.5), sz1.width, img.type());
-	Mat left(im3, Rect(0, 0, sz1.width, sz1.height));
-	img.copyTo(left);
+	
+	int heightIm3 = sz1.height;
+	int widthIm3 = sz1.width;
+	if(stackAxis == 'v'){
+		heightIm3 = sz1.height + sz2.height + cm2pixels600dpi(0.5);
+	} else {
+		widthIm3 = sz1.width + sz2.width + cm2pixels600dpi(0.5);
+	}
+	Mat im3(heightIm3, widthIm3, img.type());
+	
+	Mat im1(im3, Rect(0, 0, sz1.width, sz1.height));
+	img.copyTo(im1);
 
 	img = imread(argv[1], IMREAD_GRAYSCALE);
 	threshold(img, img, 0, 255, THRESH_BINARY + THRESH_OTSU);
@@ -173,8 +188,15 @@ int main(int argc, char** argv){
 
 	flip(img, img, 1);
 
-	Mat right(im3, Rect(0, sz1.height + cm2pixels600dpi(0.5), sz2.width, sz2.height));
-	img.copyTo(right);
+	int offsetYIm2 = 0;
+	int offsetXIm2 = 0;
+	if(stackAxis == 'v'){
+		offsetYIm2 = sz1.height + cm2pixels600dpi(0.5);
+	} else {
+		offsetXIm2 = sz1.width + cm2pixels600dpi(0.5);
+	}
+	Mat im2(im3, Rect(offsetXIm2, offsetYIm2, sz2.width, sz2.height));
+	img.copyTo(im2);
 
 	imwrite("emboss_res.png", im3);
 

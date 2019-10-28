@@ -6,7 +6,7 @@ python3 preemboss.py test.png
 
 para criar a imagem preemboss_res.png
 
-Depois, execute
+Depois, execute especificando se quer as imagens agrupadas na vertical ou na horizontal (v ou h como último parâmetro, v padrão)
 
 g++ emboss.cpp `pkg-config --cflags --libs opencv` -std=c++11 -o emboss && ./emboss preemboss_res.png
 
